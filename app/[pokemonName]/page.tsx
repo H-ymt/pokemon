@@ -1,5 +1,7 @@
 import { PokemonImage } from "@/components/pokemon-image"
+import getPokemonJapaneseName from "@/components/pokemon-name"
 import { Progress } from "@/components/ui/progress"
+import usePokemonJapaneseName from "@/components/use-pokemon-name"
 import { getPokemon } from "@/lib/pokemonAPI"
 
 export default async function PokemonPage({
@@ -8,13 +10,13 @@ export default async function PokemonPage({
   params: { pokemonName: string }
 }) {
   const { pokemonName } = params
-
   const pokemonObject = await getPokemon(pokemonName)
+  const japaneseName = await getPokemonJapaneseName(pokemonName)
 
   return (
     <>
       <h1 className="text-4xl text-bold pt-4">
-        {pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)}
+        {japaneseName.charAt(0).toUpperCase() + japaneseName.slice(1)}
       </h1>
       <div
         className="mt-4"
