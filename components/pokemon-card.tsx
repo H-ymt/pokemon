@@ -1,10 +1,40 @@
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import axios from "axios"
 
 interface PokemonCardProps {
   name: string
 }
 
+const BASE_URL = "https://pokeapi.co/api/v2/"
+
+async function getPokemonJapaneseName(englishName: string) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}pokemon-species/${englishName.toLowerCase()}`
+    )
+    const data = response.data
+
+    for (const nameInfo of data["names"]) {
+      if (nameInfo["language"]["name"] == "ja-Hrkt") {
+        return nameInfo["name"]
+      }
+    }
+    return "日本語名が見つかりません。"
+  } catch (error) {
+    return "ポケモンの情報を取得できませんでした。"
+  }
+}
+
 export function PokemonCard({ name }: PokemonCardProps) {
+  const [japaneseName, setJapaneseName] = useState("")
+
+  useEffect(() => {
+    getPokemonJapaneseName(name).then((name) => {
+      setJapaneseName(name)
+    })
+  }, [name])
+
   return (
     <Link
       href={name}
@@ -12,7 +42,7 @@ export function PokemonCard({ name }: PokemonCardProps) {
       key={name + "Card"}
     >
       <h2 className={`text-2xl font-semibold`}>
-        {name.charAt(0).toUpperCase() + name.slice(1)}
+        {japaneseName.charAt(0).toUpperCase() + japaneseName.slice(1)}
       </h2>
     </Link>
   )
